@@ -5,10 +5,8 @@ namespace backend\controllers;
 use Yii;
 use backend\service\UserServiceController as User;
 use common\helps\tools;
-use app\models\UploadForm;
 use common\helps\CommonHelper;
 use common\models\UploadValidate;
-use yii\web\UploadedFile;
 
 class AdminUserController extends CommonController {
 
@@ -16,17 +14,24 @@ class AdminUserController extends CommonController {
 
     /**
      * 用户列表
-     * @return type
+     * @param int   page 当前页码
+     * @param int   limit 一页多少条
+     * @param string order 排序规则
+     * @param string orderField 以哪个字段排序
+     * @param  array condition 条件
+     * @return json
      */
 
     public function actionList() {
         $request = Yii::$app->request;
         if ($request->isPost) {
             $User = new User();
-            $post = $request->post();
-            $defaultPageSize = $post['page'];
-            $condition = [];
-            $resul = $User->UserList($condition,$defaultPageSize);
+            $page = $request->post('page', 0); //当前页码
+            $limit = $request->post('limit', 9); //一页多少条
+            $order = $request->post('order', 'asc'); //排序
+            $orderField = $request->post('orderField', 'id'); //以哪个字段排序
+            $condition = []; //搜索条件 
+            $resul = $User->UserList($condition, $limit, $page, $orderField . ' ' . $order);
             return tools::json('200', '查询成功', $resul);
         } else {
             return $this->render('list');
@@ -64,12 +69,12 @@ class AdminUserController extends CommonController {
             $model = new UploadValidate('test_upload');
             //上传
             $result = CommonHelper::myUpload($model, 'portrait', 'uploads');
-            if(isset($result['file'])){
+            if (isset($result['file'])) {
                 $result = tools::error($result['file']);
-                 return tools::json('400', '图像上传失败',$result);
+                return tools::json('400', '图像上传失败', $result);
             }
             if ($result) {
-                return tools::json('200', '图像上传成功',$result);
+                return tools::json('200', '图像上传成功', $result);
             }
         }
     }

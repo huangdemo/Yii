@@ -207,7 +207,7 @@ use yii\helpers\Url;
                 age:'1',
                 birth:'2014-11-11',
                 explain:'说明',
-                portrait:'uploads/20181107/201811071618203873_15045995662.jpg'
+                portrait:''
             }
         },
         methods: {

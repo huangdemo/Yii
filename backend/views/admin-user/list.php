@@ -13,119 +13,70 @@ use yii\helpers\Url;
     <meta name="keywords" content="">
     <meta name="description" content="">
     <style type="text/css">
-        .container {
-  /*background: #fdfdfd;*/
-  padding: 1rem;
-  margin: 3rem auto;
-  border-radius: 0.2rem;
-  counter-reset: pagination;
-  text-align: center;
+.page { 
+  font-weight: 900; 
+  height: 40px; 
+  text-align: center; 
+  color: #888; 
+  margin: 20px auto 0; 
+  background: #f2f2f2; 
+} 
+ 
+.pagelist { 
+  font-size: 0; 
+  background: #fff; 
+  height: 50px; 
+  line-height: 50px; 
+} 
+ 
+.pagelist span { 
+  font-size: 14px; 
+} 
+ 
+.pagelist .jump { 
+  border: 1px solid #ccc; 
+  padding: 5px 8px; 
+  -webkit-border-radius: 4px; 
+  -moz-border-radius: 4px; 
+  border-radius: 4px; 
+  cursor: pointer; 
+  margin-left: 5px; 
+} 
+ 
+.pagelist .bgprimary { 
+  cursor: default; 
+  color: #fff; 
+  background: #337ab7; 
+  border-color: #337ab7; 
+} 
+ 
+.jumpinp input { 
+  width: 55px; 
+  height: 26px; 
+  font-size: 13px; 
+  border: 1px solid #ccc; 
+  -webkit-border-radius: 4px; 
+  -moz-border-radius: 4px; 
+  border-radius: 4px; 
+  text-align: center; 
+} 
+ 
+.ellipsis { 
+  padding: 0px 8px; 
+} 
+ 
+.jumppoint { 
+  margin-left: 30px; 
+} 
+ 
+.pagelist .gobtn {} 
+ 
+.bgprimary { 
+  cursor: default; 
+  color: #fff; 
+  background: #337ab7; 
+  border-color: #337ab7; 
 }
-.container:after {
-  clear: both;
-  content: "";
-  display: table;
-}
-.container ul {
-  width: 100%;
-}
-
-.large {
-  width: 45rem;
-}
-
-
-.pagination ul, li {
-  list-style: none;
-  display: inline;
-  padding-left: 0px;
-}
-
-.pagination li {
-  counter-increment: pagination;
-}
-.pagination li:hover a {
-  color: #fdfdfd;
-  background-color: #1d1f20;
-  border: solid 1px #1d1f20;
-}
-.pagination li.active a {
-  color: #fdfdfd;
-  background-color: #1d1f20;
-  border: solid 1px #1d1f20;
-}
-
-/*.pagination li:first-child a:after {
-  content: "<";
-}*/
-
-.pagination li:nth-child(2) {
-  counter-reset: pagination;
-}
-
-/*.pagination li:last-child a:after {
-  content: ">";
-}*/
-.pagination li a {
-  border: solid 1px #d6d6d6;
-  border-radius: 0.2rem;
-  color: #7d7d7d;
-  text-decoration: none;
-  text-transform: uppercase;
-  display: inline-block;
-  text-align: center;
-  padding: 0.5rem 0.9rem;
-}
-/*.pagination li a:after {
-  content: " " counter(pagination) " ";
-}*/
-
-/*.large li a {
-  display: none;
-}
-.large li:first-child a {
-  display: inline-block;
-}
-.large li:first-child a:after {
-  content: "<";
-}
-.large li:nth-child(2) a {
-  display: inline-block;
-}
-.large li:nth-child(3) a {
-  display: inline-block;
-}
-.large li:nth-child(4) a {
-  display: inline-block;
-}
-.large li:nth-child(5) a {
-  display: inline-block;
-}
-.large li:nth-child(6) a {
-  display: inline-block;
-}
-.large li:nth-child(7) a {
-  display: inline-block;
-}
-.large li:nth-child(8) a {
-  display: inline-block;
-}
-.large li:last-child a {
-  display: inline-block;
-}
-.large li:last-child a:after {
-  content: ">";
-}
-.large li:nth-last-child(2) a {
-  display: inline-block;
-}
-.large li:nth-last-child(3) {
-  display: inline-block;
-}
-.large li:nth-last-child(3):after {
-  padding: 0 1rem;
-  content: "...";
-}*/
 
     </style>
 
@@ -133,15 +84,14 @@ use yii\helpers\Url;
 </head>
 
 <body class="gray-bg">
-    <div class="wrapper wrapper-content animated fadeInRight">
-        <div class="row" id="user_list">
-
+    <div class="wrapper wrapper-content animated fadeInRight" id="user_list">
+        <div class="row">
             <div class="col-sm-4"  v-for ="user in lists">
                 <div class="contact-box">
                     <a href="profile.html">
                         <div class="col-sm-4">
                             <div class="text-center">
-                                <img alt="image" class="img-circle m-t-xs img-responsive" src="<?php echo Url::to('@web/img/a3.jpg'); ?>">
+                                <img alt="image" class="img-circle m-t-xs img-responsive" :src="user.portrait">
                                 <div class="m-t-xs font-bold">CTO</div>
                             </div>
                         </div>
@@ -156,29 +106,22 @@ use yii\helpers\Url;
                     </a>
                 </div>
             </div>
-            <div class="container large">
-            <div class="pagination" id="aso-pg-rank__pagination" v-cloak>
-                 <div>共{{currentPage}}/{{totalPageCount}}页</div>
-                     <ul class="aso-pagination" first-text="第一页" last-text="最后一页" max-size="50" next-text="下一页" previous-text="上一页">
-                         <li class="pagination-first  ">
-                             <a v-if="currentPage == 1" >第一页</a>
-                             <a v-else href="javascript:;" @click="next(1)">第一页</a>
-                         </li>
-                         <li class="pagination-prev" v-if="currentPage>1"><a href="javascript:;" @click="next(currentPage-1)">上一页</a></li>
-                         <li v-for="item in pagingList" class="pagination-page">
-                             <a v-if="currentPage==item.key || sign ==item.key" class="activeye">{{item.key}}</a>
-                             <a v-else href="javascript:;" @click="next(item.value)">{{item.key}}</a>
-                         </li>
-     
-                         <li class="pagination-next" v-if="currentPage<totalPageCount"><a href="javascript:;" @click="next(currentPage+1)">下一页</a></li>
-                         <li class="pagination-last">
-                             <a v-if="totalPageCount == currentPage">尾页</a>
-                             <a v-else href="javascript:;" @click="next(totalPageCount)">尾页</a>
-                         </li>
-                     </ul>
-             </div>
-            </div>
         </div>
+        <div class="page"  v-show="show"> 
+            <div class="pagelist">
+                <span class="jump">共{{totalNumber}}条</span> 
+                <span class="jump"v-show="current_page>1" @click="jumpPage(current_page-1)">上一页</span> 
+                <span v-show="current_page>5" class="jump" @click="jumpPage(1)">1</span> 
+                <span class="ellipsis"  v-show="efont">...</span> 
+                <span class="jump" v-for="num in indexs" :class="{bgprimary:current_page==num}" @click="jumpPage(num)">{{num}}</span> 
+                <span class="ellipsis"  v-show="efont&&current_page<pages-4">...</span> 
+                <span class="jump" @click="jumpPage(current_page+1)">下一页</span> 
+                <span v-show="current_page<pages-1" class="jump" class="jump" @click="jumpPage(pages)">{{pages}}</span> 
+                <span class="jumppoint">跳转到：</span> 
+                <span class="jumpinp"><input type="text" v-model="changePage"></span> 
+                <span class="jump gobtn" @click="jumpPage(changePage)">GO</span> 
+            </div> 
+        </div> 
     </div>
 
     <!-- 全局js -->
@@ -189,124 +132,99 @@ use yii\helpers\Url;
     <!-- 自定义js -->
     <?=Html::jsFile('@web/js/content.js?v=1.0.0')?>
 
-    <script src="https://cdn.bootcss.com/vue-resource/1.5.1/vue-resource.js"></script>
 
     <script>
        
 
 
-    var pagitation=new Vue({
+    var app =new Vue({
          el:'#user_list',
          data: {
-             // 省略的符号
-             sign:'...',
-             // 省略号位置
-             signIndex:5,
-             // 总页数
-             totalPageCount: 0,
-             // 当前页
-             currentPage:1,
-             // 显示在页面的数组列表
-             pagingList:[],
-             lists:[] //数据
+            current_page: 1, //当前页 
+            pages: 0, //总页数 
+            changePage:'',//跳转页 
+            totalNumber:100,//多少条数据
+            limit:9,//多少条分页
+            order:'desc',//排序
+            orderField:'id',//以id排序
+            lists:[]
          },
-         watch: {
-             totalPageCount:function(val) {
-                 var that = this
-                 if (!val || val == '') return;
-                 that.currentPage = 1;
-                 that.init()
-             },
-             currentPage:function(val) {
-                 var that = this
-                 that.init()
-             }
-         },
+        computed:{ 
+                 show:function(){ 
+                     return this.pages && this.pages !=1 
+                 }, 
+                 efont: function() { 
+                   if (this.pages <= 7) return false; 
+                   return this.current_page > 5 
+                 }, 
+                 indexs: function() { 
+             
+                   var left = 1, 
+                     right = this.pages, 
+                     ar = []; 
+                   if (this.pages >= 7) { 
+                     if (this.current_page > 5 && this.current_page < this.pages - 4) { 
+                       left = Number(this.current_page) - 3; 
+                       right = Number(this.current_page) + 3; 
+                     } else { 
+                       if (this.current_page <= 5) { 
+                         left = 1; 
+                         right = 7; 
+                       } else { 
+                         right = this.pages; 
+             
+                         left = this.pages - 6; 
+                       } 
+                     } 
+                   } 
+                   while (left <= right) { 
+                     ar.push(left); 
+                     left++; 
+                   } 
+                   return ar; 
+                 }, 
+               }, 
          methods: {
-             //获取订单数据
-             getorder:function(){
-                 this.$http.post(UrlArgent.CreateUrl('admin-user/list.html'),{
-                     page:this.currentPage //传递请求页面
-                 }, {
-                     headers: {
-                         "X-Requested-With": "XMLHttpRequest"
-                     },
-                     emulateJSON: true
-                 }).then(function(res){
-                   
-                     this.lists=res.body.data.lists;           //获取数据
-                     this.totalPageCount= res.body.data.totalPageCount;//获取总页数
-                     console.log(this.totalPageCount)
-                     json = res.body.data.lists;
-                 })
-             },
-             // 初始化数据
-             fetchData:function() {
-                 var that = this
-                 that.pagingList = [];
-                 var tmp = null;
-                 if ((that.totalPageCount) > 6) {
-                     if (((that.totalPageCount-1) == (that.totalPageCount - that.currentPage)) && (that.totalPageCount - that.currentPage) > 5) {
-                         for (var i=1;i<7;i++) {
-                             if (i < that.signIndex) {
-                                 tmp = {key:i, value:i }
-                             } else if (i== that.signIndex) {
-                                 tmp = {key:that.sign, value:0 }
-                             } else if (i == (that.signIndex + 1) ) {
-                                 tmp = {key:that.totalPageCount - 1, value:that.totalPageCount - 1 }
-                             } else {
-                                 tmp = {key:that.totalPageCount, value:that.totalPageCount }
-                             }
-                             that.pagingList.push(tmp)
-                         }
-                     } else if (((that.totalPageCount - that.currentPage) <= that.signIndex)){
-                         var starNum = that.totalPageCount - 5;
-                         for (var i=starNum;i<starNum+6;i++) {
-                             tmp = {key:i, value:i }
-                             that.pagingList.push(tmp)
-                         }
-                     } else {
-                         var starNum = that.currentPage - 1;
-                         for (var i=1;i<7;i++) {
-                             if (i < that.signIndex) {
-                                 tmp = {key:(starNum - 1) + i, value:(starNum - 1) + i }
-                             } else if (i== that.signIndex) {
-                                 tmp = {key:that.sign, value:0 }
-                             } else if (i == (that.signIndex + 1) ) {
-                                 tmp = {key:that.totalPageCount - 1, value:that.totalPageCount - 1 }
-                             } else {
-                                 tmp = {key:that.totalPageCount, value:that.totalPageCount }
-                             }
-                             that.pagingList.push(tmp)
-                         }
-                     }
-                 } else {
-                     for (var i =0; i <that.totalPageCount; i++) {
-                         tmp = {key:i+1, value:i+1 }
-                         that.pagingList.push(tmp)
-                     }
-                 }
-             },
-             // 跳转到某页码
-             next:function(num) {
-                 var that = this
-                 if (num <= 1) that.currentPage = 1;
-                 else if (num >= that.totalPageCount) that.currentPage = that.totalPageCount;
-                 else that.currentPage = num;
-                 //location.href="/asm/order?page"+that.currentPage;
-             },
-             init:function() {
-                 var that = this
- 
-                 that.fetchData();
-                 that.getorder();
-             }
+            jumpPage: function(id) { 
+                this.current_page = parseInt(id);
+                var data = {};
+                data.page = this.current_page;
+                data.limit = this.limit;//多少条分页
+                data.order = this.order;//排序
+                data.orderField = this.orderField;//以id排序
+              $.ajax({
+                   url: UrlArgent.CreateUrl('admin-user/list.html'),
+                   type: 'POST',
+                   dataType: 'json',
+                   data: data,
+               })
+               .done(function(res) {
+                    var list = res.data.lists;
+                    for (var i = 0; i < list.length; i++) {
+                        if( list[i].portrait == null || list[i].portrait == ''){
+                            list[i].portrait = UrlArgent.CreateUrl('img/a3.jpg');
+                        }else{
+                            list[i].portrait = UrlArgent.CreateUrl(list[i].portrait);
+                        }
+                    }
+                    app.lists= list; //获取数据
+                    app.totalNumber = res.data.totalNumber;
+                    app.pages= Math.ceil(res.data.totalNumber/app.limit);//获取总页数
+               })
+               .fail(function() {
+                   console.log("error");
+               })
+               .always(function() {
+                   console.log("complete");
+               });
+                
+            }, 
          },
          mounted:function() {
-             var that = this
- 
-             that.init()
+             var that = this;
+             that.jumpPage(1);
          }
+         
      });
 
 

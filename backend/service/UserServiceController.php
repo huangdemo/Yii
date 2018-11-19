@@ -31,26 +31,33 @@ class UserServiceController extends CommonServiceController {
         }
     }
     
-    public function UserList($condition=[],$defaultPageSize,$limit=9,$order="id desc")
+    /**
+     * 查询用户信息
+     * @param array $condition 
+     * @param int $limit
+     * @param int $page
+     * @param string $order
+     * @return array
+     */
+    public function UserList($condition=[],$limit=9,$page,$order="id desc")
     {
-        $defaultPageSize = $defaultPageSize-1+9*($defaultPageSize-1);
-        if($defaultPageSize <= 0){
-            $defaultPageSize =1;
-        }
-        $totalPageCount = AdminUser::find()->count();
+       
+        $totalNumber = AdminUser::find()->count();
         $record = AdminUser::find()
                 ->select('*')
                 ->where($condition)
-                ->offset($defaultPageSize)
+                ->offset(($page-1)*$limit)
                 ->limit($limit)
                 ->orderBy($order)
                 ->all();
-//                ->createCommand()->getRawSql();
-//        echo ($record);die;
+//        ->createCommand()->getRawSql();
+//        echo $record;die;
+        //对象转数组
         $data= array_map(function($record) {
                 return $record->attributes;
         },$record);
-        $result['totalPageCount'] = ceil($totalPageCount/$limit);
+        
+        $result['totalNumber'] = $totalNumber;
         $result['lists'] =  $data;
         return $result;
     }
