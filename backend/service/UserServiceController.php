@@ -23,16 +23,24 @@ class UserServiceController extends CommonServiceController {
             if ($AdminUser->validate() && $AdminUser->save()) {
                 return true;
             } else {
-                 $error = tools::error($AdminUser->getFirstErrors());//失败返回错误
+                $error = tools::error($AdminUser->getFirstErrors());//失败返回错误
                 return $error;
             }
         }else{
-            
+            $AdminUser->load($post, ''); //批量修改
+            $id = $post['id'];
+            unset($post['id']);
+            if ($AdminUser->validate() && $AdminUser->updateAll($post,['id'=>$id])) {
+                return true;
+            } else {
+                $error = tools::error($AdminUser->getFirstErrors());//失败返回错误
+                return $error;
+            }
         }
     }
     
     /**
-     * 查询用户信息
+     * 查询用户列表
      * @param array $condition 
      * @param int $limit
      * @param int $page
@@ -62,5 +70,19 @@ class UserServiceController extends CommonServiceController {
         return $result;
     }
     
+    public function UserDetailed($condition=[])
+    {
+        try {
+            $result = AdminUser::find()
+                ->select('*')
+                ->where($condition)
+                ->one();
+        } catch (Exception $exc) {
+           
+            return false;
+        }
+
+        return $result->attributes;
+    }
    
 }

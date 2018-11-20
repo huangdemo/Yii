@@ -29,6 +29,8 @@ class UploadValidate extends Model
      * @var int 文件大小 最大值  单位字节
      */
     public $max_size = 60 * 1024 * 1024;
+//    public $max_size = 60 * 1024 * 1024;
+
     /**
      * @var int 文件大小 最小值  单位字节
      */

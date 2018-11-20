@@ -78,5 +78,32 @@ class AdminUserController extends CommonController {
             }
         }
     }
-
+    
+    
+    public function actionEdit()
+    {
+        $request = Yii::$app->request;
+        if ($request->isGet) {
+            $id = $request->get('id');
+            $condition['id'] = $id;
+            $User = new User();
+            $data = $User->UserDetailed($condition);
+            if($data){
+                return tools::json('200', '查询成功', $data);
+            }else{
+                return tools::json('400', '查询失败', []);
+            }
+        }else{
+            $post = $request->post();
+            $User = new User();
+            $result = $User->AddUser($post,false);
+            if ($result === true) {
+                return tools::json('200', '修改成功');
+            } else {
+                return tools::json('500', $result);
+            }
+          
+        }
+        
+    }
 }

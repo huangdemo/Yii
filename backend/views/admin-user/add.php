@@ -26,7 +26,7 @@ use yii\helpers\Url;
                     <div class="col-sm-12">
                         <div class="ibox float-e-margins">
                             <div class="ibox-title">
-                                <h5>添加后台管理人 <small>包括自定义样式的复选和单选按钮</small></h5>
+                                <h5>{{Administrator}} <small>包括自定义样式的复选和单选按钮</small></h5>
                                 <div class="ibox-tools">
                                     <a class="collapse-link">
                                         <i class="fa fa-chevron-up"></i>
@@ -108,14 +108,14 @@ use yii\helpers\Url;
 
                                     <div class="hr-line-dashed"></div>
                                     <div class="form-group" >
-                                            <div class="icol-sm-10" style="width: 50%;margin-left: 25%;">
+                                            <div class="icol-sm-10" style="width: 50%;margin-left: 12%;">
                                                 <div class="ibox-title">
                                                     <h5>添加图像 <small>点击上传</small></h5>
                                                     <div class="ibox-tools">
                                                         <a class="collapse-link">
                                                             <i class="fa fa-chevron-up"></i>
                                                         </a>
-                                                        <a class="dropdown-toggle" data-toggle="dropdown" href="form_basic.html#" aria-expanded="false">
+                                                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
                                                             <i class="fa fa-wrench"></i>
                                                         </a>
                                                         <ul class="dropdown-menu dropdown-user">
@@ -134,6 +134,9 @@ use yii\helpers\Url;
                                                         <a data-toggle="modal" class="btn btn-primary" href="form_basic.html#modal-form">点击上传窗口</a>
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <div class="icol-sm-10" style="width: 20%;margin-left: 70%;margin-top: -8%;">
+                                                <img width="150" height="150" style="border-radius:5px;" :src="portrait1">
                                             </div>
                                     </div>
                                     <div class="hr-line-dashed"></div>
@@ -194,29 +197,41 @@ use yii\helpers\Url;
     <!-- iCheck -->
     <?=Html::jsFile('@web/js/plugins/iCheck/icheck.min.js')?>
     <script type="text/javascript">
+    //js接受get参数
+    var id = UrlArgent.GetItem('id');
+    var type = UrlArgent.GetItem('type');
 
     var App = new Vue({
         el: '#add_user',
         inject: 'reload', // 引入方法
         data: {
+            Administrator:'添加管理员',
             user: {
-                name: 'name',
-                user: 'user',
-                password :'password',
-                phone:'phone',
-                age:'1',
-                birth:'2014-11-11',
-                explain:'说明',
-                portrait:''
-            }
+                // name: 'name',
+                // user: 'user',
+                // password :'password',
+                // phone:'phone',
+                // age:'1',
+                // birth:'2014-11-11',
+                // explain:'说明',
+                // portrait:''
+            },
+            portrait1:'',
+
         },
         methods: {
             submit: function() {
 
               // var formData = JSON.stringify(this.user); // 这里才是你的表单数据
+              if(type != 2){
+                var url = UrlArgent.CreateUrl('admin-user/add.html');
+              }else{
+                var url =  UrlArgent.CreateUrl('admin-user/edit.html');
+              }
+
               $.ajax({ 
                   // url: "<?=Url::to(['admin-user/add'],true)?>",
-                  url: UrlArgent.CreateUrl('admin-user/add.html'),
+                  url: url,
                   type: 'POST',
                   dataType: 'json',
                   data: this.user// 这里才是你的表单数据
@@ -254,6 +269,7 @@ use yii\helpers\Url;
                     .done(function(res) {
                         if(res.code == '200'){
                             App.user.portrait = res.data.file_path;
+                            App.portrait1 = UrlArgent.CreateUrl(res.data.file_path);
                             //添加图像
                             var html = "<img width=200 height=200 src="+UrlArgent.CreateUrl(res.data.file_path)+" />";
                             $('#portrait').html(html);
@@ -266,7 +282,33 @@ use yii\helpers\Url;
                     
             }
             
-        }
+        },
+         mounted:function() {
+            if(type == 2){
+                this.Administrator = '修改管理员';
+            }
+            $.ajax({
+                url:  UrlArgent.CreateUrl('admin-user/edit.html'),
+                type: 'GET',
+                dataType: 'json',
+                data: {'id': id},
+            })
+            .done(function(res) {
+                if(res.data.portrait == null || res.data.portrait == ''){
+                    App.portrait1 = UrlArgent.CreateUrl('img/a3.jpg');
+                }else{
+                    App.portrait1 = UrlArgent.CreateUrl(res.data.portrait);
+                }
+                App.user = res.data;
+            })
+            .fail(function() {
+                console.log("error");
+            })
+            .always(function() {
+                console.log("complete");
+            });
+            
+         }
 
     })
 

@@ -88,7 +88,7 @@ use yii\helpers\Url;
         <div class="row">
             <div class="col-sm-4"  v-for ="user in lists">
                 <div class="contact-box">
-                    <a href="profile.html">
+                    <a href="#"  @click = "details(user.id)">
                         <div class="col-sm-4">
                             <div class="text-center">
                                 <img alt="image" class="img-circle m-t-xs img-responsive" :src="user.portrait">
@@ -219,6 +219,10 @@ use yii\helpers\Url;
                });
                 
             }, 
+            details: function(id){
+                window.location.href= UrlArgent.CreateUrl('admin-user/add.html',{'id':id,'type':2});
+                console.log(id)
+            },
          },
          mounted:function() {
              var that = this;
