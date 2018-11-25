@@ -98,7 +98,7 @@ use yii\helpers\Url;
                         <div class="col-sm-8">
                             <h3><strong>{{user.name}}</strong></h3>
                             <p><i class="fa fa-map-marker"></i> {{user.phone}}</p>
-                            <address>
+                            <address :title="user.explain" style="width: 160px; height: 20px; overflow: hidden; display: block; text-overflow: ellipsis; white-space: nowrap; cursor: pointer;">
                             {{user.explain}}
                             </address>
                         </div>

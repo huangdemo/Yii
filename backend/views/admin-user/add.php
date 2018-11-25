@@ -1,7 +1,7 @@
-<!-- <?php
+<?php
 use yii\helpers\Html;
 use yii\helpers\Url;
-?> -->
+?>
 <!DOCTYPE html>
 <html>
 
@@ -286,29 +286,22 @@ use yii\helpers\Url;
          mounted:function() {
             if(type == 2){
                 this.Administrator = '修改管理员';
+                $.ajax({
+                    url:  UrlArgent.CreateUrl('admin-user/edit.html'),
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {'id': id},
+                })
+                .done(function(res) {
+                    if(res.data.portrait == null || res.data.portrait == ''){
+                        App.portrait1 = UrlArgent.CreateUrl('img/a3.jpg');
+                    }else{
+                        App.portrait1 = UrlArgent.CreateUrl(res.data.portrait);
+                    }
+                    App.user = res.data;
+                });
             }
-            $.ajax({
-                url:  UrlArgent.CreateUrl('admin-user/edit.html'),
-                type: 'GET',
-                dataType: 'json',
-                data: {'id': id},
-            })
-            .done(function(res) {
-                if(res.data.portrait == null || res.data.portrait == ''){
-                    App.portrait1 = UrlArgent.CreateUrl('img/a3.jpg');
-                }else{
-                    App.portrait1 = UrlArgent.CreateUrl(res.data.portrait);
-                }
-                App.user = res.data;
-            })
-            .fail(function() {
-                console.log("error");
-            })
-            .always(function() {
-                console.log("complete");
-            });
-            
-         }
+        }
 
     })
 

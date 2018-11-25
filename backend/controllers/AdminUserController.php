@@ -27,12 +27,13 @@ class AdminUserController extends CommonController {
         if ($request->isPost) {
             $User = new User();
             $page = $request->post('page', 0); //当前页码
+            $draw = $request->post('draw', 0); //当前页码
             $limit = $request->post('limit', 9); //一页多少条
             $order = $request->post('order', 'asc'); //排序
             $orderField = $request->post('orderField', 'id'); //以哪个字段排序
             $condition = []; //搜索条件 
-            $resul = $User->UserList($condition, $limit, $page, $orderField . ' ' . $order);
-            return tools::json('200', '查询成功', $resul);
+            $result = $User->UserList($condition, $limit, $page, $orderField . ' ' . $order);
+            return tools::json('200', '查询成功', $result);
         } else {
             return $this->render('list');
         }

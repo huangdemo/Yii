@@ -2,10 +2,11 @@
 
 namespace backend\service;
 use backend\Service\CommonServiceController;
-use app\models\AdminUser;
+use app\models\Role;
+use app\models\RoleUser;
 use common\helps\tools;
 
-class UserServiceController extends CommonServiceController {
+class RoleServiceController extends CommonServiceController {
     
     /**
      * 添加或者修改后台用户
@@ -13,9 +14,9 @@ class UserServiceController extends CommonServiceController {
      * @param type $bool true 添加  false 修改
      * @return type 
      */
-    public function AddUser($post,$bool=true)
+    public function AddRole($post,$bool=true)
     {
-        $AdminUser = new AdminUser();
+        $Role = new Role();
         if($bool){
             $AdminUser->load($post, ''); //批量插入
             if ($AdminUser->validate() && $AdminUser->save()) {
@@ -38,34 +39,48 @@ class UserServiceController extends CommonServiceController {
     }
     
     /**
-     * 查询用户列表
+     * 当前用户所有角色和系统所有角色
      * @param array $condition 
+     * @param bool $bool  是否系统所有角色
      * @param int $limit
      * @param int $page
      * @param string $order
      * @return array
      */
-    public function UserList($condition=[],$limit=9,$page=1,$order="id desc")
+    public function RoleList($condition=[],$bool,$limit=9,$page=1,$order="list_order desc")
     {
        
-        $totalNumber = AdminUser::find()->count();
-
-        $record = AdminUser::find()
-                ->select('*')
-                ->where($condition)
-                ->offset(($page-1)*$limit)
-                ->limit($limit)
+        if($bool){
+            $roleList = Role::find()
+                ->from('role as r')
+                ->select('r.name,r.id,r.remark')
+                ->where(['status'=>$condition['status']])
                 ->orderBy($order)
+                ->asArray()
                 ->all();
-       // ->createCommand()->getRawSql();
-       // echo $record;die;
-        //对象转数组
-        $data= array_map(function($record) {
-                return $record->attributes;
-        },$record);
-        $recordsFiltered = count($data);
-        $result['totalNumber'] = $totalNumber;
-        $result['lists'] =  $data;
+
+            $RoleUser = RoleUser::find()->count();
+            $roleUserList = RoleUser::find()
+                        ->from('role_user as ru')
+                        ->select('r.name,r.id,r.remark')
+                        ->join('LEFT JOIN','role as r','r.id=ru.role_id')
+                        ->where(['user_id'=>$condition['user_id']])
+                        ->asArray()
+                        ->all();
+      
+                // ->createCommand()->getRawSql();
+                // echo $record;die;
+        }
+        foreach ($roleList as $k => &$v) {
+            foreach ($roleUserList as $key => $val) {
+                if($v['id'] === $val['id']){
+                    unset($roleList[$k]);
+                }
+            }
+               
+        }
+        $result['lists'] =  array_merge($roleList);
+        $result['list'] =  $roleUserList;
         return $result;
     }
     
