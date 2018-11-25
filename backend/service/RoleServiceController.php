@@ -9,7 +9,7 @@ use common\helps\tools;
 class RoleServiceController extends CommonServiceController {
     
     /**
-     * 添加或者修改后台用户
+     * 授权后台用户
      * @param type $post  数据
      * @param type $bool true 添加  false 修改
      * @return type 
@@ -84,19 +84,6 @@ class RoleServiceController extends CommonServiceController {
         return $result;
     }
     
-    public function UserDetailed($condition=[])
-    {
-        try {
-            $result = AdminUser::find()
-                ->select('*')
-                ->where($condition)
-                ->one();
-        } catch (Exception $exc) {
-           
-            return false;
-        }
-
-        return $result->attributes;
-    }
+   
    
 }

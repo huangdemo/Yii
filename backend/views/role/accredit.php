@@ -92,13 +92,14 @@ use yii\helpers\Url;
 
 	   <?=Html::jsFile('@web/js/plugins/nestable/jquery.nestable.js')?>
     <script>
-
+		var id = UrlArgent.GetItem('id');
         $(document).ready(function () {
 
         	$.ajax({
 	      				url: UrlArgent.CreateUrl('role/list.html'),
 	      				type: 'GET',
 	      				dataType: 'json',
+	      				data:{'id':id},
 	      				success:function(res){
 	      					var lists =  res.data.lists;
   							var role_list = '';
@@ -164,7 +165,7 @@ use yii\helpers\Url;
         	var nestable2 =  $('#nestable2').nestable('serialize');
         	var data = {};
         		data.id = JSON.stringify(nestable2);
-        	    data.user_id = 50;
+        	    data.user_id = id;
         	$.ajax({
         		url:  UrlArgent.CreateUrl('role/add-role.html'),
         		type: 'POST',
